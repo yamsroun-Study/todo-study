@@ -1,0 +1,12 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create # 운영 환경에서는 none으로 설정해야 한다.
+    properties:
+      hibernate:
+        format_sql: true
+
+logging:
+  level:
+    jocture.todo: DEBUG
+    org.hibernate.SQL: DEBUG
