@@ -1,19 +1,20 @@
 spring:
   datasource:
-    url: jdbc:h2:tcp://localhost/~/todo
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
-    #url: jdbc:postgresql://localhost:5432/postgres
-    #username: postgre
-    #password: postgres
-    #driver-class-name: org.postgresql.Driver
+    #url: jdbc:h2:tcp://localhost/~/todo
+    #username: sa
+    #password:
+    #driver-class-name: org.h2.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgre
+    password: postgres
+    driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
       ddl-auto: create  # 운영 환경에서는 none으로 설정해야 한다.
     properties:
       hibernate:
+        use_sql_comments: true
         format_sql: true
 
 logging:

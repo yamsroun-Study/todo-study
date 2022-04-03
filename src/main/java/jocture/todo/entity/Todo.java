@@ -3,6 +3,7 @@ package jocture.todo.entity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
@@ -20,8 +21,9 @@ import javax.persistence.Table;
 @Entity
 // @Table(name = "tbl_todo")
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // JPA 스펙
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE) // @Builder 스펙
 @Builder
+@Getter
 public class Todo {
 
     @Id @GeneratedValue

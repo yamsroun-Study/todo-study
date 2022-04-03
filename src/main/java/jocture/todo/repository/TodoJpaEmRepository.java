@@ -3,7 +3,6 @@ package jocture.todo.repository;
 import jocture.todo.entity.Todo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -63,11 +62,11 @@ public class TodoJpaEmRepository implements TodoRepository {
 
     @Override
     public void delete(Todo todo) {
-
+        deleteById(todo.getId());
     }
 
     @Override
     public void deleteById(Integer id) {
-
+        findById(id).ifPresent(em::remove);
     }
 }
