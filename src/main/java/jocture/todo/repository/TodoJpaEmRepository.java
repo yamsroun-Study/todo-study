@@ -41,7 +41,7 @@ public class TodoJpaEmRepository implements TodoRepository {
                 .setParameter("id", id)
                 .getSingleResult();
             return Optional.of(todo);
-            // return Optional.ofNullable(todo);
+            // return Optional.ofNullable(todo)
         } catch (NoResultException e) {
             return Optional.empty();
         }
@@ -60,13 +60,31 @@ public class TodoJpaEmRepository implements TodoRepository {
         em.persist(todo);
     }
 
+    // TDD (Test-Driven Development) -> 테스트 주도 개발
+    // -> 실제 메인 코드보다 테스트 코드를 먼저 만드는 개발 방법론
+
     @Override
-    public void delete(Todo todo) {
+    public void delete(Todo todo) { // Java에서는 Method Signature (메소드 시그니처)
         deleteById(todo.getId());
     }
 
+    // 1. Best (Method Reference)
     @Override
     public void deleteById(Integer id) {
         findById(id).ifPresent(em::remove);
+    }
+
+    // 2. Not Bad (Lambda Expression)
+    public void deleteById_notBad(Integer id) {
+        findById(id).ifPresent(entity -> em.remove(entity));
+    }
+
+    // 3. Worst (Optional스럽지 못한 사용)
+    public void deleteById_worst(Integer id) {
+        Optional<Todo> result = findById(id);
+        if (result.isPresent()) {
+            Todo todo = result.get();
+            em.remove(todo);
+        }
     }
 }
