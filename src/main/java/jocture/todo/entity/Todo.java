@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -23,7 +24,7 @@ import javax.persistence.Table;
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // JPA 스펙
 @AllArgsConstructor(access = AccessLevel.PRIVATE) // @Builder 스펙
 @Builder
-@Getter
+@Getter @Setter
 public class Todo {
 
     @Id @GeneratedValue

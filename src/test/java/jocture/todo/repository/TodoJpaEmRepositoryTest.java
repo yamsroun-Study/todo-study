@@ -12,7 +12,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 @SpringBootTest
@@ -79,7 +79,6 @@ class TodoJpaEmRepositoryTest {
     }
 
     @Test
-    // @Rollback(false)
     void save() {
         // Given
         Todo todo = saveTodo("자바 공부하기");
@@ -91,19 +90,25 @@ class TodoJpaEmRepositoryTest {
         assertThat(result.get().getId()).isEqualTo(todo.getId());
     }
 
-    @Disabled
     @Test
     void delete() {
         // Given
+        Todo todo = saveTodo("자바 공부하기");
         // When
+        repository.delete(todo);
         // Then
+        Optional<Todo> result = repository.findById(todo.getId());
+        assertThat(result).isEmpty();
     }
 
-    @Disabled
     @Test
     void deleteById() {
         // Given
+        Todo todo = saveTodo("자바 공부하기");
         // When
+        repository.deleteById(todo.getId());
         // Then
+        Optional<Todo> result = repository.findById(todo.getId());
+        assertThat(result).isEmpty();
     }
 }
