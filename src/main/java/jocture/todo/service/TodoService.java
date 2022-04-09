@@ -5,7 +5,6 @@ import jocture.todo.exception.ApplicationException;
 import jocture.todo.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.service.spi.ServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,7 +58,7 @@ public class TodoService {
             todo -> {
                 todo.setTitle(newTodo.getTitle());
                 todo.setDone(newTodo.isDone());
-                repository.save(todo);
+                // repository.save(todo); // 변경감지(Dirty Checking)에 의해 자동으로 UPDATE 발생
                 log.info("Todo가 수정되었습니다. {}", todo.getId());
             },
             () -> log.warn("수정할 Todo가 없습니다., {}", newTodo.getId())
