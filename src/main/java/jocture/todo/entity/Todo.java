@@ -29,6 +29,10 @@ import javax.persistence.Table;
 @ToString
 public class Todo {
 
+    // Primitive Type (원시/기본 타입) -> int, long, boolean, ...
+    // Wrapper Type -> Integer, Long, Boolean, String, ...
+    // Reference Type -> 기타 객체들 ...
+
     @Id @GeneratedValue
     private Integer id;
 
