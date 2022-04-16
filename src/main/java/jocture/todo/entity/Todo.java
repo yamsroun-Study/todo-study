@@ -11,7 +11,7 @@ import lombok.ToString;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 // JPA
 // -> Java의 표준 ORM
@@ -39,6 +39,8 @@ public class Todo {
     private String userId;
 
     private String title;
+
+    private LocalDateTime createdAt;
 
     private boolean done;
 }
