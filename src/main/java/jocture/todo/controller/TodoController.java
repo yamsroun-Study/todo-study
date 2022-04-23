@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -20,64 +21,68 @@ import java.util.List;
 @Slf4j
 @RestController // == @Controller + @ResponseBody
 @RequiredArgsConstructor
+@RequestMapping("/todo")
 public class TodoController {
 
     private static final String TEMP_USER_ID = "temp";
 
     private final TodoService service;
 
-    // HTTP Request Method : GET(조회), POST(등록/만능), PUT(전체수정), PATCH(부분수정), DELETE(삭제), OPTION, HEAD, TRACE
+    // HTTP Request Method : GET(조회), POST(등록/만능), PUT(전체수정), PATCH(부분수정), DELETE(삭제)
     // API 요소 : HTTP 요청 메소드 + URI Path (+ 요청 파라미터 + 요청 바디 + 응답 바디)
 
-    @GetMapping("/todo")
+    @GetMapping
     public ResponseEntity<List<TodoDto>> getTodoList() {
         List<Todo> todos = service.getList(TEMP_USER_ID);
         // JSON -> 객체를 표현하는 스트링
         // 객체를 JSON 스트링으로 변환 -> HttpMessageConverter (Serialize/Serializer)
         // JSON 스트링을 객체로 변환 -> HttpMessageConverter (Deserialize/Deserializer)
+
+        // List<TodoDto> todoDtos = new ArrayList<>();
+        // for (Todo todo: todos) {
+            // TodoDto todoDto = TodoDto.builder()
+            //     .id(todo.getId())
+            //     .title(todo.getTitle())
+            //     .done(todo.isDone())
+            //     .build();
+            // TodoDto todoDto = TodoDto.toDto(todo);
+            // todoDtos.add(todoDto);
+        // }
         return ResponseEntity.ok().body(TodoDto.toDtoList(todos));
     }
 
-    @PostMapping("/todo")
+    // R&R -> Role & Responsibility
+    @PostMapping
     public ResponseEntity<List<TodoDto>> createTodo(
-        @RequestBody Todo todo
+        @RequestBody TodoDto todoDto // 기본 생성자로 객체 생성 -> Setter로 필드 할당(Reflection)
     ) {
-        log.info(">>> todo: {}", todo);
-        todo.setUserId(TEMP_USER_ID);
-
+        log.info(">>> todoDto: {}", todoDto);
+        // TodoDto -> Todo
         // Todo todo = Todo.builder()
         //     .userId(TEMP_USER_ID)
-        //     .title(title)
+        //     .title(todoDto.getTitle())
         //     .build();
+        Todo todo = Todo.from(todoDto); // TodoDto를 Todo 객체로 변환한다.
         service.create(todo);
         return getTodoList();
     }
 
-    @PutMapping("/todo")
+    @PutMapping
     public ResponseEntity<List<TodoDto>> updateTodo(
-        Integer id,
-        String title,
-        boolean done
+        @RequestBody TodoDto todoDto
     ) {
-        Todo todo = Todo.builder()
-            .id(id)
-            .userId(TEMP_USER_ID)
-            .title(title)
-            .done(done)
-            .build();
-
+        log.info(">>> todoDto: {}", todoDto);
+        Todo todo = Todo.from(todoDto);
         service.update(todo);
         return getTodoList();
     }
 
-    @DeleteMapping("/todo")
+    @DeleteMapping
     public ResponseEntity<List<TodoDto>> deleteTodo(
-        Integer id
+        @RequestBody TodoDto todoDto
     ) {
-        Todo todo = Todo.builder()
-            .id(id)
-            .userId(TEMP_USER_ID)
-            .build();
+        log.info(">>> todoDto: {}", todoDto);
+        Todo todo = Todo.from(todoDto);
         service.delete(todo);
         return getTodoList();
     }

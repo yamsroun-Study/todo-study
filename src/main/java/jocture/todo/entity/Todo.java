@@ -1,5 +1,6 @@
 package jocture.todo.entity;
 
+import jocture.todo.dto.TodoDto;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,6 +30,8 @@ import java.time.LocalDateTime;
 @ToString
 public class Todo {
 
+    private static final String TEMP_USER_ID = "temp";
+
     // Primitive Type (원시/기본 타입) -> int, long, boolean, ...
     // Wrapper Type -> Integer, Long, Boolean, String, ...
     // Reference Type -> 기타 객체들 ...
@@ -43,4 +46,13 @@ public class Todo {
     private LocalDateTime createdAt;
 
     private boolean done;
+
+    public static Todo from(TodoDto dto) {
+        return Todo.builder()
+            .id(dto.getId())
+            .userId(TEMP_USER_ID)
+            .title(dto.getTitle())
+            .done(dto.isDone())
+            .build();
+    }
 }
