@@ -5,6 +5,7 @@ import jocture.todo.entity.Todo;
 import jocture.todo.service.TodoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,9 +32,14 @@ public class TodoController {
     // HTTP Request Method : GET(조회), POST(등록/만능), PUT(전체수정), PATCH(부분수정), DELETE(삭제)
     // API 요소 : HTTP 요청 메소드 + URI Path (+ 요청 파라미터 + 요청 바디 + 응답 바디)
 
+    // @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600, methods = {RequestMethod.POST})
     @GetMapping
     public ResponseEntity<List<TodoDto>> getTodoList() {
+        // 스프링 3대 요소 : IoC(DI), PSA, AOP
+
+        log.debug("getTodoList()");
         List<Todo> todos = service.getList(TEMP_USER_ID);
+        log.debug("getTodoList() 22");
         // JSON -> 객체를 표현하는 스트링
         // 객체를 JSON 스트링으로 변환 -> HttpMessageConverter (Serialize/Serializer)
         // JSON 스트링을 객체로 변환 -> HttpMessageConverter (Deserialize/Deserializer)
@@ -57,14 +63,17 @@ public class TodoController {
         @RequestBody TodoDto todoDto // 기본 생성자로 객체 생성 -> Setter로 필드 할당(Reflection)
     ) {
         log.info(">>> todoDto: {}", todoDto);
-        // TodoDto -> Todo
-        // Todo todo = Todo.builder()
-        //     .userId(TEMP_USER_ID)
-        //     .title(todoDto.getTitle())
-        //     .build();
         Todo todo = Todo.from(todoDto); // TodoDto를 Todo 객체로 변환한다.
         service.create(todo);
         return getTodoList();
+    }
+
+    @PostMapping(consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String createTodo22222(
+        @RequestBody String body
+    ) {
+        log.info(">>> body: {}", body);
+        return "{\"title\":\"테스트\"}";
     }
 
     @PutMapping

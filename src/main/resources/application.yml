@@ -1,6 +1,6 @@
 #server:
 #  servlet:
-#    context-path: "/study"
+#    context-path: /study
 
 spring:
   datasource:
@@ -10,7 +10,7 @@ spring:
     #driver-class-name: org.h2.Driver
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgre
-    password: postgres
+    password: postgre
     driver-class-name: org.postgresql.Driver
 
   jpa:
