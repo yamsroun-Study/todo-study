@@ -23,6 +23,7 @@ import java.util.List;
 @RestController // == @Controller + @ResponseBody
 @RequiredArgsConstructor
 @RequestMapping("/todo")
+// @CrossOrigin(origins = {"http://localhost:3000"}, maxAge = 3600, methods = {GET, POST, PUT, DELETE})
 public class TodoController {
 
     private static final String TEMP_USER_ID = "temp";
@@ -32,7 +33,7 @@ public class TodoController {
     // HTTP Request Method : GET(조회), POST(등록/만능), PUT(전체수정), PATCH(부분수정), DELETE(삭제)
     // API 요소 : HTTP 요청 메소드 + URI Path (+ 요청 파라미터 + 요청 바디 + 응답 바디)
 
-    // @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600, methods = {RequestMethod.POST})
+    // @CrossOrigin("*")
     @GetMapping
     public ResponseEntity<List<TodoDto>> getTodoList() {
         // 스프링 3대 요소 : IoC(DI), PSA, AOP
@@ -46,13 +47,13 @@ public class TodoController {
 
         // List<TodoDto> todoDtos = new ArrayList<>();
         // for (Todo todo: todos) {
-            // TodoDto todoDto = TodoDto.builder()
-            //     .id(todo.getId())
-            //     .title(todo.getTitle())
-            //     .done(todo.isDone())
-            //     .build();
-            // TodoDto todoDto = TodoDto.toDto(todo);
-            // todoDtos.add(todoDto);
+        // TodoDto todoDto = TodoDto.builder()
+        //     .id(todo.getId())
+        //     .title(todo.getTitle())
+        //     .done(todo.isDone())
+        //     .build();
+        // TodoDto todoDto = TodoDto.toDto(todo);
+        // todoDtos.add(todoDto);
         // }
         return ResponseEntity.ok().body(TodoDto.toDtoList(todos));
     }
