@@ -5,11 +5,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.Builder;
+import lombok.Getter;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "member")
 @Builder
+@Getter
 public class User {
 
     @Id

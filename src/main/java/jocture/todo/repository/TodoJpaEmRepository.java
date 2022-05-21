@@ -28,7 +28,7 @@ public class TodoJpaEmRepository implements TodoRepository {
 
     @Override
     public List<Todo> findAll() {
-        String jpql = "select t from Todo t"; // JPQL(Java Persistence Query Language)
+        String jpql = "select t from Todo t order by t.id desc"; // JPQL(Java Persistence Query Language)
         return em.createQuery(jpql, Todo.class)
             .getResultList();
     }
@@ -49,7 +49,7 @@ public class TodoJpaEmRepository implements TodoRepository {
 
     @Override
     public List<Todo> findByUserId(String userId) {
-        String jpql = "select t from Todo t where t.userId = :userId";
+        String jpql = "select t from Todo t where t.userId = :userId order by t.id desc";
         return em.createQuery(jpql, Todo.class)
             .setParameter("userId", userId)
             .getResultList();

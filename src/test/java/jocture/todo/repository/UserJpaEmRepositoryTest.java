@@ -23,11 +23,7 @@ class UserJpaEmRepositoryTest {
     void basic() {
         // Given
         String email = "test@abc.com";
-        User user = User.builder()
-            .username("TEST")
-            .email(email)
-            .password("PaSsWoRd")
-            .build();
+        User user = createUser(email);
 
         // When
         repository.save(user);
@@ -41,6 +37,14 @@ class UserJpaEmRepositoryTest {
         // assertThat(result.get()).isEqualTo(user);
         // assertThat(result.get()).isSameAs(user);
         assertThat(exists).isTrue();
+    }
+
+    private User createUser(String email) {
+        return User.builder()
+            .username("TEST")
+            .email(email)
+            .password("PaSsWoRd")
+            .build();
     }
 
     @Test

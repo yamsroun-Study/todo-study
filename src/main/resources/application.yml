@@ -8,10 +8,11 @@ spring:
     #username: sa
     #password:
     #driver-class-name: org.h2.Driver
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:log4jdbc:postgresql://localhost:5432/postgres
     username: postgre
     password: postgre
-    driver-class-name: org.postgresql.Driver
+    #driver-class-name: org.postgresql.Driver
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
 
   jpa:
     hibernate:
@@ -28,3 +29,5 @@ logging:
       SQL: DEBUG
       type: TRACE
       type.BasicTypeRegistry: INFO
+    jdbc:
+      resultset: OFF
