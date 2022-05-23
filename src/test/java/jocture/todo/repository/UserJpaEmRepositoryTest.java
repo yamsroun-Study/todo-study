@@ -23,32 +23,67 @@ class UserJpaEmRepositoryTest {
     void basic() {
         // Given
         String email = "test@abc.com";
-        User user = createUser(email);
-
+        String password = "";
+        User user = createUser(email, password);
         // When
         repository.save(user);
         Boolean exists = repository.existsByEmail(email);
         Optional<User> result = repository.findByEmail(email);
-
         // Then
+        assertThat(exists).isTrue();
         assertThat(result).isPresent()
             .contains(user)      // equals() 비교
             .containsSame(user); // ==(참조) 비교
         // assertThat(result.get()).isEqualTo(user);
         // assertThat(result.get()).isSameAs(user);
-        assertThat(exists).isTrue();
     }
 
-    private User createUser(String email) {
+    @Test
+    void basic_noResult() {
+        // Given
+        String email = "test@abc.com";
+        String password = "";
+        User user = createUser(email, password);
+        // When
+        Boolean exists = repository.existsByEmail(email);
+        Optional<User> result = repository.findByEmail(email);
+        // Then
+        assertThat(exists).isFalse();
+        assertThat(result).isEmpty();
+    }
+
+    private User createUser(String email, String password) {
         return User.builder()
             .username("TEST")
             .email(email)
-            .password("PaSsWoRd")
+            .password(password)
             .build();
     }
 
     @Test
     void findByEmailAndPassword() {
-        // Todo
+        // Given
+        String email = "test@abc.com";
+        String password = "PaSsWoRd";
+        User user = createUser(email, password);
+        repository.save(user);
+        // When
+        Optional<User> result = repository.findByEmailAndPassword(email, password);
+        // Then
+        assertThat(result).isPresent()
+            .contains(user)
+            .containsSame(user);
+    }
+
+    @Test
+    void findByEmailAndPassword_noResult() {
+        // Given
+        String email = "test@abc.com";
+        String password = "PaSsWoRd";
+        User user = createUser(email, password);
+        // When
+        Optional<User> result = repository.findByEmailAndPassword(email, password);
+        // Then
+        assertThat(result).isEmpty();
     }
 }
