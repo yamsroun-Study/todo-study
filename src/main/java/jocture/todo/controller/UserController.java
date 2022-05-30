@@ -5,6 +5,8 @@ import jocture.todo.entity.User;
 import jocture.todo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,9 +20,10 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping(value = "/signup")
+    @PostMapping("/signup")
     public UserDto signUp(
-        @RequestBody UserDto userDto // MappingJackson2HttpMessageConverter : Deserialize : 객체생성(디폴트생성자) -> Setter(필드명으로 하나씩 할당)
+        @RequestBody UserDto userDto
+        // MappingJackson2HttpMessageConverter : Deserialize : 객체생성(디폴트생성자) -> getter/setter 메서드를 이용해 프로퍼티 찾아서 Reflection을 이용해 할당
     ) {
         log.debug(">>> userDto : {}", userDto);
 
@@ -47,5 +50,11 @@ public class UserController {
             log.error("signUp() Exception ->", e);
             throw e;
         }
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<?> exceptionHandler(Exception e) {
+        log.error("exceptionHandler ->", e);
+        return ResponseEntity.badRequest().body("ERROR");
     }
 }
