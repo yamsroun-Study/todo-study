@@ -1,6 +1,6 @@
 package jocture.todo.exception;
 
-public class ApplicationException extends RuntimeException {
+public class ApplicationException extends RuntimeException { // Unchecked Exception
 
     public ApplicationException(String message) {
         super(message);

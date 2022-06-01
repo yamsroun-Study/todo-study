@@ -16,7 +16,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -89,6 +91,34 @@ class UserControllerTest {
         mvc.perform(post(url).content(body)
                 .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
-            .andExpect(status().isInternalServerError());
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void login_success() throws Exception {
+        // Given
+        String url = "/auth/login";
+        UserDto userDto = UserDto.builder()
+            .email("test@abc.com")
+            .password("PaSsWoRd")
+            .build();
+        String body = objectMapper.writeValueAsString(userDto);
+        // 메서드 모킹
+        doReturn(User.builder()
+            .id("abcdefg")
+            .email(userDto.getEmail())
+            .username("TEST")
+            .build()
+        ).when(userService)
+            .logIn(anyString(), anyString());
+
+        // When && Then
+        MvcResult mvcResult = mvc.perform(post(url).content(body)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andReturn();
+        String responseBody = mvcResult.getResponse().getContentAsString();
+        log.debug(">>> responseBody : {}", responseBody);
     }
 }

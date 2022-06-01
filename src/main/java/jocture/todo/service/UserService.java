@@ -1,7 +1,6 @@
 package jocture.todo.service;
 
 
-import java.util.Optional;
 import jocture.todo.entity.User;
 import jocture.todo.exception.ApplicationException;
 import jocture.todo.repository.UserRepository;
@@ -10,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
+import java.util.Optional;
 
 @Slf4j
 @Service // @Component + Service 레이어 역할 (논리적) 표현 (기능 없음)
