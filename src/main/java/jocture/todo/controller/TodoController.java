@@ -1,12 +1,13 @@
 package jocture.todo.controller;
 
 import jocture.todo.dto.TodoDto;
+import jocture.todo.dto.response.ResponseDto;
+import jocture.todo.dto.response.ResponseResultDto;
 import jocture.todo.entity.Todo;
 import jocture.todo.service.TodoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,7 +36,7 @@ public class TodoController {
 
     // @CrossOrigin("*")
     @GetMapping
-    public ResponseEntity<List<TodoDto>> getTodoList() {
+    public ResponseDto<List<TodoDto>> getTodoList() {
         // 스프링 3대 요소 : IoC(DI), PSA, AOP
 
         log.debug("getTodoList()");
@@ -55,12 +56,16 @@ public class TodoController {
         // TodoDto todoDto = TodoDto.toDto(todo);
         // todoDtos.add(todoDto);
         // }
-        return ResponseEntity.ok().body(TodoDto.toDtoList(todos));
+
+        // return ResponseEntity.ok().body(TodoDto.toDtoList(todos));
+
+        ResponseResultDto<List<TodoDto>> responseData = ResponseResultDto.of(TodoDto.toDtoList(todos));
+        return ResponseDto.of(responseData);
     }
 
     // R&R -> Role & Responsibility
     @PostMapping
-    public ResponseEntity<List<TodoDto>> createTodo(
+    public ResponseDto<List<TodoDto>> createTodo(
         @RequestBody TodoDto todoDto // 기본 생성자로 객체 생성 -> Setter로 필드 할당(Reflection)
     ) {
         log.info(">>> todoDto: {}", todoDto);
@@ -78,7 +83,7 @@ public class TodoController {
     }
 
     @PutMapping
-    public ResponseEntity<List<TodoDto>> updateTodo(
+    public ResponseDto<List<TodoDto>> updateTodo(
         @RequestBody TodoDto todoDto
     ) {
         log.info(">>> todoDto: {}", todoDto);
@@ -88,7 +93,7 @@ public class TodoController {
     }
 
     @DeleteMapping
-    public ResponseEntity<List<TodoDto>> deleteTodo(
+    public ResponseDto<List<TodoDto>> deleteTodo(
         @RequestBody TodoDto todoDto
     ) {
         log.info(">>> todoDto: {}", todoDto);
