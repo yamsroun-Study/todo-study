@@ -4,17 +4,12 @@ import jocture.todo.dto.TodoDto;
 import jocture.todo.dto.response.ResponseDto;
 import jocture.todo.dto.response.ResponseResultDto;
 import jocture.todo.entity.Todo;
+import jocture.todo.mapper.TodoMapper;
 import jocture.todo.service.TodoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,6 +25,7 @@ public class TodoController {
     private static final String TEMP_USER_ID = "temp";
 
     private final TodoService service;
+    private final TodoMapper todoMapper;
 
     // HTTP Request Method : GET(조회), POST(등록/만능), PUT(전체수정), PATCH(부분수정), DELETE(삭제)
     // API 요소 : HTTP 요청 메소드 + URI Path (+ 요청 파라미터 + 요청 바디 + 응답 바디)
@@ -58,18 +54,26 @@ public class TodoController {
         // }
 
         // return ResponseEntity.ok().body(TodoDto.toDtoList(todos));
+        // List<TodoDto> todos = new ArrayList<>();
+        // for (Todo todo: todos) {
+        //     todos.add(todoMapper.toDto(todo));
+        // }
 
-        ResponseResultDto<List<TodoDto>> responseData = ResponseResultDto.of(TodoDto.toDtoList(todos));
+        ResponseResultDto<List<TodoDto>> responseData = ResponseResultDto.of(todoMapper.toDtoList(todos));
         return ResponseDto.of(responseData);
     }
 
     // R&R -> Role & Responsibility
     @PostMapping
     public ResponseDto<List<TodoDto>> createTodo(
-        @RequestBody TodoDto todoDto // 기본 생성자로 객체 생성 -> Setter로 필드 할당(Reflection)
+        @RequestBody TodoDto todoDto
+        // MappingJackson2HttpMessageConverter : Deserialize : 객체생성(디폴트생성자) -> getter/setter 메서드를 이용해 프로퍼티 찾아서 Reflection을 이용해 할당
     ) {
         log.info(">>> todoDto: {}", todoDto);
-        Todo todo = Todo.from(todoDto); // TodoDto를 Todo 객체로 변환한다.
+        // Todo todo = Todo.from(todoDto); // TodoDto를 Todo 객체로 변환한다.
+        Todo todo = todoMapper.toEntity(todoDto);
+        // todo.setUserId(TEMP_USER_ID); // 임시
+
         service.create(todo);
         return getTodoList();
     }
@@ -87,7 +91,9 @@ public class TodoController {
         @RequestBody TodoDto todoDto
     ) {
         log.info(">>> todoDto: {}", todoDto);
-        Todo todo = Todo.from(todoDto);
+        // Todo todo = Todo.from(todoDto);
+        Todo todo = todoMapper.toEntity(todoDto);
+        todo.setUserId(TEMP_USER_ID); // 임시
         service.update(todo);
         return getTodoList();
     }
@@ -97,7 +103,9 @@ public class TodoController {
         @RequestBody TodoDto todoDto
     ) {
         log.info(">>> todoDto: {}", todoDto);
-        Todo todo = Todo.from(todoDto);
+        // Todo todo = Todo.from(todoDto);
+        Todo todo = todoMapper.toEntity(todoDto);
+        todo.setUserId(TEMP_USER_ID); // 임시
         service.delete(todo);
         return getTodoList();
     }

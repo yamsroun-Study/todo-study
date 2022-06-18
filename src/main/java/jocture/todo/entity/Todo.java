@@ -1,17 +1,8 @@
 package jocture.todo.entity;
 
-import jocture.todo.dto.TodoDto;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 // JPA
@@ -47,12 +38,12 @@ public class Todo {
 
     private boolean done;
 
-    public static Todo from(TodoDto dto) {
-        return Todo.builder()
-            .id(dto.getId())
-            .userId(TEMP_USER_ID)
-            .title(dto.getTitle())
-            .done(dto.isDone())
-            .build();
-    }
+    // public static Todo from(TodoDto dto) {
+    //     return Todo.builder()
+    //         .id(dto.getId())
+    //         .userId(TEMP_USER_ID)
+    //         .title(dto.getTitle())
+    //         .done(dto.isDone())
+    //         .build();
+    // }
 }

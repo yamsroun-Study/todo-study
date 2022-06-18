@@ -4,15 +4,12 @@ import jocture.todo.dto.UserDto;
 import jocture.todo.dto.response.ResponseDto;
 import jocture.todo.dto.response.ResponseResultDto;
 import jocture.todo.entity.User;
+import jocture.todo.mapper.UserMapper;
 import jocture.todo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController // @Controller + @ResponseBody
@@ -21,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserService userService;
+    private final UserMapper userMapper;
 
     @PostMapping("/signup")
     public ResponseDto<UserDto> signUp(
@@ -29,12 +27,18 @@ public class UserController {
     ) {
         log.debug(">>> userDto : {}", userDto);
 
+        // UserMapperImpl userMapper = new UserMapperImpl();
+
         // UserDto -> User 변환
-        User user = User.builder()
-            .username(userDto.getUsername())
-            .email(userDto.getEmail())
-            .password(userDto.getPassword())
-            .build();
+        // User user = User.builder()
+        //     .username(userDto.getUsername())
+        //     .email(userDto.getEmail())
+        //     .password(userDto.getPassword())
+        //     .build();
+        // log.debug(">>> user : {}", user);
+
+        User user = userMapper.toEntity(userDto);
+        // log.debug(">>> user : {}", user);
 
         try {
             // Service Layer(서비스 계층)에 위임
@@ -45,14 +49,15 @@ public class UserController {
             // -> Java 10에서 var 키워드 추가됨 (Kotlin 언어에서 쓰는 방식)
 
             // 응답
-            var responseUserDto = UserDto.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .build();
+            // UserDto responseUserDto = userMapper.toDto(user);
+            // var responseUserDto = UserDto.builder()
+            //     .id(user.getId())
+            //     .username(user.getUsername())
+            //     .email(user.getEmail())
+            //     .build();
 
             // ResponseResultPageDto dataPage = ResponseResultPageDto.of(1, 20, 15);
-            ResponseResultDto<UserDto> resultDto = ResponseResultDto.of(responseUserDto/*, dataPage*/);
+            ResponseResultDto<UserDto> resultDto = ResponseResultDto.of(userMapper.toDto(user)/*, dataPage*/);
             return ResponseDto.of(resultDto);
         } catch (Exception e) {
             log.error("signUp() Exception ->", e);
@@ -75,15 +80,15 @@ public class UserController {
         String password = userDto.getPassword();
         User user = userService.logIn(email, password);
 
-        UserDto responseUserDto = UserDto.builder()
-            .id(user.getId())
-            .email(user.getEmail())
-            .username(user.getUsername())
-            .build();
+        // UserDto responseUserDto = UserDto.builder()
+        //     .id(user.getId())
+        //     .email(user.getEmail())
+        //     .username(user.getUsername())
+        //     .build();
 
         // Parameter : 20 -> Response 15
 
-        ResponseResultDto<UserDto> resultDto = ResponseResultDto.of(responseUserDto);
+        ResponseResultDto<UserDto> resultDto = ResponseResultDto.of(userMapper.toDto(user));
         return ResponseDto.of(resultDto);
     }
 }
