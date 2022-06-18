@@ -4,8 +4,10 @@ import jocture.todo.dto.UserDto;
 import jocture.todo.dto.response.ResponseDto;
 import jocture.todo.dto.response.ResponseResultDto;
 import jocture.todo.entity.User;
+import jocture.todo.exception.ApplicationException;
 import jocture.todo.mapper.UserMapper;
 import jocture.todo.service.UserService;
+import jocture.todo.type.ResponseCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -40,29 +42,33 @@ public class UserController {
         User user = userMapper.toEntity(userDto);
         // log.debug(">>> user : {}", user);
 
-        try {
-            // Service Layer(서비스 계층)에 위임
-            userService.signUp(user);
+        // Service Layer(서비스 계층)에 위임
+        userService.signUp(user);
 
-            // 타입 추론 : 컴파일러가 빌드 타입에 타입을 추론할 수 있어야 한다.
-            // -> 대표적인게 람다식
-            // -> Java 10에서 var 키워드 추가됨 (Kotlin 언어에서 쓰는 방식)
+        // 타입 추론 : 컴파일러가 빌드 타입에 타입을 추론할 수 있어야 한다.
+        // -> 대표적인게 람다식
+        // -> Java 10에서 var 키워드 추가됨 (Kotlin 언어에서 쓰는 방식)
 
-            // 응답
-            // UserDto responseUserDto = userMapper.toDto(user);
-            // var responseUserDto = UserDto.builder()
-            //     .id(user.getId())
-            //     .username(user.getUsername())
-            //     .email(user.getEmail())
-            //     .build();
+        // 응답
+        // UserDto responseUserDto = userMapper.toDto(user);
+        // var responseUserDto = UserDto.builder()
+        //     .id(user.getId())
+        //     .username(user.getUsername())
+        //     .email(user.getEmail())
+        //     .build();
 
-            // ResponseResultPageDto dataPage = ResponseResultPageDto.of(1, 20, 15);
-            ResponseResultDto<UserDto> resultDto = ResponseResultDto.of(userMapper.toDto(user)/*, dataPage*/);
-            return ResponseDto.of(resultDto);
-        } catch (Exception e) {
-            log.error("signUp() Exception ->", e);
-            throw e;
-        }
+        // ResponseResultPageDto dataPage = ResponseResultPageDto.of(1, 20, 15);
+        ResponseResultDto<UserDto> resultDto = ResponseResultDto.of(userMapper.toDto(user)/*, dataPage*/);
+        // return ResponseEntity.ok(ResponseDto.of(resultDto));
+        return ResponseDto.of(resultDto);
+    }
+
+    @ExceptionHandler//(ApplicationException.class)
+    public ResponseEntity<?> applicationExceptionHandler(ApplicationException e) {
+        log.error("applicationExceptionHandler ->", e);
+        String message1 = e.getMessage();
+        String message2 = e.getMessage() + "2222";
+        return ResponseDto.<String>responseEntityOf(ResponseCode.BAD_REQUEST, message1);
     }
 
     @ExceptionHandler
