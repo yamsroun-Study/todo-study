@@ -1,6 +1,6 @@
 package jocture.todo.controller;
 
-import jocture.todo.dto.TodoDto;
+import jocture.todo.dto.*;
 import jocture.todo.dto.response.ResponseDto;
 import jocture.todo.dto.response.ResponseResultDto;
 import jocture.todo.entity.Todo;
@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 // 스프링 3계층(레이어) -> @Controller, @Service, @Repository
@@ -64,15 +65,16 @@ public class TodoController {
     }
 
     // R&R -> Role & Responsibility
-    @PostMapping
+    @PostMapping()
     public ResponseDto<List<TodoDto>> createTodo(
-        @RequestBody TodoDto todoDto
+        // @PathVariable String id, // URL의 Path 변수에서 가져옴
+        // @RequestParam String title, // Query String 또는 Body 데이터(Content-Type이 x-www-form-urlencoded인 경우)
+        // @ModelAttribute TodoDto todoDto,
+        @RequestBody @Valid TodoCreateDto todoDto
         // MappingJackson2HttpMessageConverter : Deserialize : 객체생성(디폴트생성자) -> getter/setter 메서드를 이용해 프로퍼티 찾아서 Reflection을 이용해 할당
     ) {
-        log.info(">>> todoDto: {}", todoDto);
-        // Todo todo = Todo.from(todoDto); // TodoDto를 Todo 객체로 변환한다.
         Todo todo = todoMapper.toEntity(todoDto);
-        // todo.setUserId(TEMP_USER_ID); // 임시
+        todo.setUserId(TEMP_USER_ID); // 임시
 
         service.create(todo);
         return getTodoList();
@@ -88,10 +90,8 @@ public class TodoController {
 
     @PutMapping
     public ResponseDto<List<TodoDto>> updateTodo(
-        @RequestBody TodoDto todoDto
+        @RequestBody @Valid TodoUpdateDto todoDto
     ) {
-        log.info(">>> todoDto: {}", todoDto);
-        // Todo todo = Todo.from(todoDto);
         Todo todo = todoMapper.toEntity(todoDto);
         todo.setUserId(TEMP_USER_ID); // 임시
         service.update(todo);
@@ -100,10 +100,8 @@ public class TodoController {
 
     @DeleteMapping
     public ResponseDto<List<TodoDto>> deleteTodo(
-        @RequestBody TodoDto todoDto
+        @RequestBody @Valid TodoDeleteDto todoDto
     ) {
-        log.info(">>> todoDto: {}", todoDto);
-        // Todo todo = Todo.from(todoDto);
         Todo todo = todoMapper.toEntity(todoDto);
         todo.setUserId(TEMP_USER_ID); // 임시
         service.delete(todo);

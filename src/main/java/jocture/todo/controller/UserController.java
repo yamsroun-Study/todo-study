@@ -4,13 +4,10 @@ import jocture.todo.dto.UserDto;
 import jocture.todo.dto.response.ResponseDto;
 import jocture.todo.dto.response.ResponseResultDto;
 import jocture.todo.entity.User;
-import jocture.todo.exception.ApplicationException;
 import jocture.todo.mapper.UserMapper;
 import jocture.todo.service.UserService;
-import jocture.todo.type.ResponseCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -61,20 +58,6 @@ public class UserController {
         ResponseResultDto<UserDto> resultDto = ResponseResultDto.of(userMapper.toDto(user)/*, dataPage*/);
         // return ResponseEntity.ok(ResponseDto.of(resultDto));
         return ResponseDto.of(resultDto);
-    }
-
-    @ExceptionHandler//(ApplicationException.class)
-    public ResponseEntity<?> applicationExceptionHandler(ApplicationException e) {
-        log.error("applicationExceptionHandler ->", e);
-        String message1 = e.getMessage();
-        String message2 = e.getMessage() + "2222";
-        return ResponseDto.<String>responseEntityOf(ResponseCode.BAD_REQUEST, message1);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<?> exceptionHandler(Exception e) {
-        log.error("exceptionHandler ->", e);
-        return ResponseEntity.badRequest().body("ERROR");
     }
 
     @PostMapping("/login")

@@ -38,5 +38,5 @@ generated/
 .vscode/
 
 ### 기타 ###
-**/src/main/**/study/my/
-**/src/test/**/study/my/
+**/src/main/**/mystudy/
+**/src/test/**/mystudy/
