@@ -1,7 +1,11 @@
 package jocture.todo.dto;
 
+import jocture.todo.controller.validation.marker.TodoValidationGroup;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Slf4j
 @Builder // 다른 생성자가 없으면, 전체 파라미터 생성자 자동 생성
@@ -11,8 +15,12 @@ import lombok.extern.slf4j.Slf4j;
 @ToString
 public class TodoDto {
 
+    @NotNull(groups = {TodoValidationGroup.Update.class, TodoValidationGroup.Deletion.class})
     private Integer id;
+
+    @NotBlank(groups = {TodoValidationGroup.Creation.class, TodoValidationGroup.Update.class})
     private String title;
+
     private boolean done;
 
     // 인스턴스(Instance) 메소스

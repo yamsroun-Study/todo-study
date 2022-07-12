@@ -28,7 +28,8 @@ public class ResponseDto<T> {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private ResponseResultDto<T> result;
 
-    private List<String> errors;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<ResponseErrorDto> errors;
 
     private ResponseDto(String code, String message, ResponseResultDto<T> result) {
         this.code = code;
@@ -36,10 +37,16 @@ public class ResponseDto<T> {
         this.result = result;
     }
 
-    private ResponseDto(String code, String message, String errorMessage) {
+    private ResponseDto(String code, String message, ResponseErrorDto error) {
         this.code = code;
         this.message = message;
-        addError(errorMessage);
+        addError(error);
+    }
+
+    private ResponseDto(String code, String message, List<ResponseErrorDto> errors) {
+        this.code = code;
+        this.message = message;
+        this.errors = errors;
     }
 
     private ResponseDto(String code, String message) {
@@ -77,10 +84,16 @@ public class ResponseDto<T> {
             .body(new ResponseDto<>(responseCode.code(), responseCode.getMessage(), result));
     }
 
-    public static <T> ResponseEntity<ResponseDto<T>> responseEntityOf(ResponseCode responseCode, String errorMessage) {
+    public static <T> ResponseEntity<ResponseDto<T>> responseEntityOf(ResponseCode responseCode, ResponseErrorDto error) {
         HttpStatus httpStatus = responseCode.getHttpStatus();
         return ResponseEntity.status(httpStatus)
-            .body(new ResponseDto<>(responseCode.code(), responseCode.getMessage(), errorMessage));
+            .body(new ResponseDto<>(responseCode.code(), responseCode.getMessage(), error));
+    }
+
+    public static <T> ResponseEntity<ResponseDto<T>> responseEntityOf(ResponseCode responseCode, List<ResponseErrorDto> errors) {
+        HttpStatus httpStatus = responseCode.getHttpStatus();
+        return ResponseEntity.status(httpStatus)
+            .body(new ResponseDto<>(responseCode.code(), responseCode.getMessage(), errors));
     }
 
     public static <T> ResponseDto<T> of(ResponseCode responseCode) {
@@ -88,10 +101,10 @@ public class ResponseDto<T> {
     }
 
     // 인스턴스 메서드 (vs. 스태틱 메서드)
-    public void addError(String message) {
+    public void addError(ResponseErrorDto error) {
         if (errors == null) {
             errors = new ArrayList<>();
         }
-        errors.add(message);
+        errors.add(error);
     }
 }

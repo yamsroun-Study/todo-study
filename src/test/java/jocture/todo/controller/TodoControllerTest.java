@@ -1,10 +1,12 @@
 package jocture.todo.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jocture.todo.dto.*;
+import jocture.todo.dto.TodoDto;
 import jocture.todo.mapper.TodoMapper;
 import jocture.todo.service.TodoService;
+import jocture.todo.type.ResponseCode;
 import lombok.extern.slf4j.Slf4j;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.*;
@@ -16,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
@@ -31,14 +34,20 @@ class TodoControllerTest {
     void createTodo() throws Exception {
         // Given
         String url = "/todo";
-        TodoCreateDto dto = new TodoCreateDto("스프링 공부하기");
+        // Java 10에서 var 도입
+        // -> 지역 변수에만 사용 가능
+        // -> 컴파일러가 타입 추론(Type Inference)이 가능한 경우 사용 가능
+        var dto = TodoDto.builder()
+            .title("스프링 공부하기")
+            .build();
         String body = objectMapper.writeValueAsString(dto); // Serialize : 객체 -> JSON 스트링으로 변환
 
         // When && Then
         mvc.perform(post(url).content(body)
                 .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
-            .andExpect(status().isOk());
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.code", Matchers.containsString(ResponseCode.SUCCESS.code())));
     }
 
     @ParameterizedTest
@@ -47,28 +56,36 @@ class TodoControllerTest {
     void createTodo_ValidError(String title) throws Exception {
         // Given
         String url = "/todo";
-        TodoCreateDto dto = new TodoCreateDto(title);
+        var dto = TodoDto.builder()
+            .title(title)
+            .build();
         String body = objectMapper.writeValueAsString(dto);
 
         // When && Then
         mvc.perform(post(url).content(body)
                 .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code", Matchers.containsString(ResponseCode.BAD_REQUEST.code())));
     }
 
     @Test
     void updateTodo() throws Exception {
         // Given
         String url = "/todo";
-        TodoUpdateDto dto = new TodoUpdateDto(1, "스프링 공부하기", true);
+        var dto = TodoDto.builder()
+            .id(1)
+            .title("스프링 공부하기")
+            .done(true)
+            .build();
         String body = objectMapper.writeValueAsString(dto);
 
         // When && Then
         mvc.perform(put(url).content(body)
                 .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
-            .andExpect(status().isOk());
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.code", Matchers.containsString(ResponseCode.SUCCESS.code())));
     }
 
     @ParameterizedTest
@@ -76,28 +93,37 @@ class TodoControllerTest {
     void updateTodo_ValidError(Integer id, String title, boolean done) throws Exception {
         // Given
         String url = "/todo";
-        TodoUpdateDto dto = new TodoUpdateDto(id, title, done);
+        var dto = TodoDto.builder()
+            .id(id)
+            .title(title)
+            .done(done)
+            .build();
         String body = objectMapper.writeValueAsString(dto);
 
         // When && Then
         mvc.perform(put(url).content(body)
                 .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code", Matchers.containsString(ResponseCode.BAD_REQUEST.code())));
+
     }
 
     @Test
     void deleteTodo() throws Exception {
         // Given
         String url = "/todo";
-        TodoDeleteDto dto = new TodoDeleteDto(1);
+        var dto = TodoDto.builder()
+            .id(1)
+            .build();
         String body = objectMapper.writeValueAsString(dto);
 
         // When && Then
         mvc.perform(delete(url).content(body)
                 .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
-            .andExpect(status().isOk());
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.code", Matchers.containsString(ResponseCode.SUCCESS.code())));
     }
 
     @ParameterizedTest
@@ -105,13 +131,16 @@ class TodoControllerTest {
     void deleteTodo_ValidError(Integer id) throws Exception {
         // Given
         String url = "/todo";
-        TodoDeleteDto dto = new TodoDeleteDto(id);
+        var dto = TodoDto.builder()
+            .id(id)
+            .build();
         String body = objectMapper.writeValueAsString(dto);
 
         // When && Then
         mvc.perform(delete(url).content(body)
                 .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code", Matchers.containsString(ResponseCode.BAD_REQUEST.code())));
     }
 }

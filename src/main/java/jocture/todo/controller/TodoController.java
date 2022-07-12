@@ -1,6 +1,7 @@
 package jocture.todo.controller;
 
-import jocture.todo.dto.*;
+import jocture.todo.controller.validation.marker.TodoValidationGroup;
+import jocture.todo.dto.TodoDto;
 import jocture.todo.dto.response.ResponseDto;
 import jocture.todo.dto.response.ResponseResultDto;
 import jocture.todo.entity.Todo;
@@ -9,9 +10,9 @@ import jocture.todo.service.TodoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 // 스프링 3계층(레이어) -> @Controller, @Service, @Repository
@@ -70,7 +71,7 @@ public class TodoController {
         // @PathVariable String id, // URL의 Path 변수에서 가져옴
         // @RequestParam String title, // Query String 또는 Body 데이터(Content-Type이 x-www-form-urlencoded인 경우)
         // @ModelAttribute TodoDto todoDto,
-        @RequestBody @Valid TodoCreateDto todoDto
+        @RequestBody @Validated({TodoValidationGroup.Creation.class}) TodoDto todoDto
         // MappingJackson2HttpMessageConverter : Deserialize : 객체생성(디폴트생성자) -> getter/setter 메서드를 이용해 프로퍼티 찾아서 Reflection을 이용해 할당
     ) {
         Todo todo = todoMapper.toEntity(todoDto);
@@ -90,7 +91,7 @@ public class TodoController {
 
     @PutMapping
     public ResponseDto<List<TodoDto>> updateTodo(
-        @RequestBody @Valid TodoUpdateDto todoDto
+        @RequestBody @Validated({TodoValidationGroup.Update.class}) TodoDto todoDto
     ) {
         Todo todo = todoMapper.toEntity(todoDto);
         todo.setUserId(TEMP_USER_ID); // 임시
@@ -100,7 +101,7 @@ public class TodoController {
 
     @DeleteMapping
     public ResponseDto<List<TodoDto>> deleteTodo(
-        @RequestBody @Valid TodoDeleteDto todoDto
+        @RequestBody @Validated({TodoValidationGroup.Deletion.class}) TodoDto todoDto
     ) {
         Todo todo = todoMapper.toEntity(todoDto);
         todo.setUserId(TEMP_USER_ID); // 임시

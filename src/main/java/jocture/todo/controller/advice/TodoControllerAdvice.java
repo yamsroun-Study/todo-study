@@ -1,30 +1,43 @@
 package jocture.todo.controller.advice;
 
 import jocture.todo.dto.response.ResponseDto;
-import jocture.todo.exception.ApplicationException;
+import jocture.todo.dto.response.ResponseErrorDto;
 import jocture.todo.type.ResponseCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.validation.*;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
 public class TodoControllerAdvice {
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> badRequestHandler(Exception e) {
-        log.error("badRequestHandler ->", e);
-        return ResponseEntity.badRequest().body("ERROR");
-    }
-
-    @ExceptionHandler//(ApplicationException.class)
-    public ResponseEntity<?> applicationExceptionHandler(ApplicationException e) {
-        log.error("applicationExceptionHandler ->", e);
-        String message1 = e.getMessage();
-        String message2 = e.getMessage() + "2222";
-        return ResponseDto.<String>responseEntityOf(ResponseCode.BAD_REQUEST, message1);
+    @ExceptionHandler
+    public ResponseEntity<?> badRequestHandler(BindException ex) {
+        log.error("badRequestHandler ->", ex);
+        BindingResult bindingResult = ex.getBindingResult();
+        // List<ObjectError> allErrors = bindingResult.getAllErrors();
+        // allErrors.forEach(objectError -> {
+        //     log.debug(">>> getObjectName    : {}", objectError.getObjectName());
+        //     log.debug(">>> getArguments     : {}", objectError.getArguments());
+        //     log.debug(">>> getDefaultMessage: {}", objectError.getDefaultMessage());
+        // });
+        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+        // 중하수
+        // var errors = new ArrayList<ResponseErrorDto>();
+        // fieldErrors.forEach(fieldError -> {
+        //     var error = new ResponseErrorDto(fieldError.getField(), fieldError.getRejectedValue(), fieldError.getDefaultMessage());
+        //     errors.add(error);
+        // });
+        // 중수 이상
+        var errors = fieldErrors.stream()
+            .map(fieldError -> new ResponseErrorDto(fieldError.getField(), fieldError.getRejectedValue(), fieldError.getDefaultMessage()))
+            .collect(Collectors.toList());
+        return ResponseDto.<String>responseEntityOf(ResponseCode.BAD_REQUEST, errors);
     }
 
     @ExceptionHandler(Exception.class)
