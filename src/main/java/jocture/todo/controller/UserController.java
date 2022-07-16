@@ -1,5 +1,6 @@
 package jocture.todo.controller;
 
+import jocture.todo.controller.validation.marker.UserValidationGroup;
 import jocture.todo.dto.UserDto;
 import jocture.todo.dto.response.ResponseDto;
 import jocture.todo.dto.response.ResponseResultDto;
@@ -8,6 +9,7 @@ import jocture.todo.mapper.UserMapper;
 import jocture.todo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -21,7 +23,7 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseDto<UserDto> signUp(
-        @RequestBody UserDto userDto
+        @RequestBody @Validated({UserValidationGroup.SignUp.class}) UserDto userDto
         // MappingJackson2HttpMessageConverter : Deserialize : 객체생성(디폴트생성자) -> getter/setter 메서드를 이용해 프로퍼티 찾아서 Reflection을 이용해 할당
     ) {
         log.debug(">>> userDto : {}", userDto);
@@ -62,7 +64,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseDto<UserDto> logIn(
-        @RequestBody UserDto userDto
+        @RequestBody @Validated({UserValidationGroup.Login.class}) UserDto userDto
     ) {
         log.debug(">>> userDto : {}", userDto);
         String email = userDto.getEmail();

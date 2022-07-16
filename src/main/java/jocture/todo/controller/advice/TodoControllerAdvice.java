@@ -2,6 +2,7 @@ package jocture.todo.controller.advice;
 
 import jocture.todo.dto.response.ResponseDto;
 import jocture.todo.dto.response.ResponseErrorDto;
+import jocture.todo.exception.ApplicationException;
 import jocture.todo.type.ResponseCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +41,13 @@ public class TodoControllerAdvice {
         return ResponseDto.<String>responseEntityOf(ResponseCode.BAD_REQUEST, errors);
     }
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler
+    public ResponseEntity<?> globalExceptionHandler(ApplicationException e) {
+        log.error("applicationExceptionHandler ->", e);
+        return ResponseEntity.internalServerError().body("ERROR");
+    }
+
+    @ExceptionHandler
     public ResponseEntity<?> globalExceptionHandler(Exception e) {
         log.error("globalExceptionHandler ->", e);
         return ResponseEntity.internalServerError().body("ERROR");
