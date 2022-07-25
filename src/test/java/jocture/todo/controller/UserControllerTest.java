@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jocture.todo.dto.UserDto;
 import jocture.todo.entity.User;
 import jocture.todo.exception.ApplicationException;
+import jocture.todo.exception.LoginFailException;
 import jocture.todo.mapper.UserMapper;
 import jocture.todo.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -211,5 +212,24 @@ class UserControllerTest {
         mvc.perform(post(url).content(body).contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
             .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void login_fail() throws Exception {
+        // Given
+        String url = "/auth/login";
+        UserDto userDto = UserDto.builder()
+            .email("invalid@com")
+            .password("INVALID_PASSWORD")
+            .build();
+        String body = objectMapper.writeValueAsString(userDto);
+        // 메서드 모킹
+        doThrow(new LoginFailException("아이디 또는 패스워드가 잘못되었습니다."))
+            .when(userService).logIn(anyString(), anyString());
+
+        // When && Then
+        mvc.perform(post(url).content(body).contentType(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(status().isUnauthorized());
     }
 }

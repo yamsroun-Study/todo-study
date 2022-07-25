@@ -49,9 +49,9 @@ public class ResponseDto<T> {
         this.errors = errors;
     }
 
-    private ResponseDto(String code, String message) {
-        this.code = code;
-        this.message = message;
+    private ResponseDto(ResponseCode responseCode) {
+        this.code = responseCode.code();
+        this.message = responseCode.getMessage();
     }
 
     // 정적 팩토리 메서드(Static Factory Method) 방식이 대체로 더 좋다.
@@ -65,6 +65,10 @@ public class ResponseDto<T> {
         return new ResponseDto<>(ResponseCode.SUCCESS.code(), ResponseCode.SUCCESS.getMessage(), result);
     }
 
+    public static <T> ResponseDto<T> of(ResponseCode responseCode) {
+        return new ResponseDto<>(responseCode);
+    }
+
     // 메소드명이 같음, 파라미터 수 또는 파라미터 타입이 다르다 (메서드 시그니처가 다르다) -> Method Overloading
     public static <T> ResponseEntity<ResponseDto<T>> responseEntityOf(ResponseResultDto<T> result) {
         return ResponseEntity.ok(
@@ -75,7 +79,7 @@ public class ResponseDto<T> {
     public static <T> ResponseEntity<ResponseDto<T>> responseEntityOf(ResponseCode responseCode) {
         HttpStatus httpStatus = responseCode.getHttpStatus();
         return ResponseEntity.status(httpStatus)
-            .body(new ResponseDto<>(responseCode.code(), responseCode.getMessage()));
+            .body(new ResponseDto<>(responseCode));
     }
 
     public static <T> ResponseEntity<ResponseDto<T>> responseEntityOf(ResponseCode responseCode, ResponseResultDto<T> result) {
@@ -96,9 +100,6 @@ public class ResponseDto<T> {
             .body(new ResponseDto<>(responseCode.code(), responseCode.getMessage(), errors));
     }
 
-    public static <T> ResponseDto<T> of(ResponseCode responseCode) {
-        return new ResponseDto<>(responseCode.code(), responseCode.getMessage());
-    }
 
     // 인스턴스 메서드 (vs. 스태틱 메서드)
     public void addError(ResponseErrorDto error) {

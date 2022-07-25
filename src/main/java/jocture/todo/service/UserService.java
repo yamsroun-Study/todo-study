@@ -3,6 +3,7 @@ package jocture.todo.service;
 
 import jocture.todo.entity.User;
 import jocture.todo.exception.ApplicationException;
+import jocture.todo.exception.LoginFailException;
 import jocture.todo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +44,6 @@ public class UserService {
             throw new ApplicationException("Password is blank");
         }
         Optional<User> user = userRepository.findByEmailAndPassword(email, password);
-        return user.orElse(null);
+        return user.orElseThrow(() -> new LoginFailException("아이디 또는 패스워드가 잘못되었습니다."));
     }
 }

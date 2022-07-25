@@ -1,8 +1,8 @@
 package jocture.todo.service;
 
-import java.util.Optional;
 import jocture.todo.entity.User;
 import jocture.todo.exception.ApplicationException;
+import jocture.todo.exception.LoginFailException;
 import jocture.todo.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -14,12 +14,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
@@ -116,10 +116,9 @@ class UserServiceTest {
         doReturn(Optional.empty())
             .when(repository)
             .findByEmailAndPassword(email, password);
-        // When
-        User result = service.logIn(email, password);
-        // Then
-        assertThat(result).isNull();
+        // When & Then
+        assertThatThrownBy(() -> service.logIn(email, password))
+            .isInstanceOf(LoginFailException.class);
     }
 
     @ParameterizedTest(name = "[{index}] {0} is blank value")

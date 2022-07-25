@@ -16,7 +16,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create  # 운영 환경에서는 none으로 설정해야 한다.
+      ddl-auto: none  # 운영 환경에서는 none으로 설정해야 한다.
     properties:
       hibernate:
         use_sql_comments: true

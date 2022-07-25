@@ -7,6 +7,8 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "member")
+@NoArgsConstructor(access = AccessLevel.PROTECTED) //JPA 스펙
+@AllArgsConstructor(access = AccessLevel.PRIVATE) //Builder에서 필요
 @Builder
 @Getter
 @ToString

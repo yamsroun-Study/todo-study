@@ -7,6 +7,7 @@ import jocture.todo.dto.response.ResponseResultDto;
 import jocture.todo.entity.User;
 import jocture.todo.mapper.UserMapper;
 import jocture.todo.service.UserService;
+import jocture.todo.type.ResponseCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -69,17 +70,8 @@ public class UserController {
         log.debug(">>> userDto : {}", userDto);
         String email = userDto.getEmail();
         String password = userDto.getPassword();
+
         User user = userService.logIn(email, password);
-
-        // UserDto responseUserDto = UserDto.builder()
-        //     .id(user.getId())
-        //     .email(user.getEmail())
-        //     .username(user.getUsername())
-        //     .build();
-
-        // Parameter : 20 -> Response 15
-
-        ResponseResultDto<UserDto> resultDto = ResponseResultDto.of(userMapper.toDto(user));
-        return ResponseDto.of(resultDto);
+        return ResponseDto.of(ResponseCode.SUCCESS);
     }
 }
