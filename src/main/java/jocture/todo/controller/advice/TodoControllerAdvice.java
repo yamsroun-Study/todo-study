@@ -2,8 +2,7 @@ package jocture.todo.controller.advice;
 
 import jocture.todo.dto.response.ResponseDto;
 import jocture.todo.dto.response.ResponseErrorDto;
-import jocture.todo.exception.ApplicationException;
-import jocture.todo.exception.LoginFailException;
+import jocture.todo.exception.*;
 import jocture.todo.type.ResponseCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -49,10 +48,10 @@ public class TodoControllerAdvice {
         return ResponseEntity.internalServerError().body("ERROR");
     }
 
-    @ExceptionHandler
+    @ExceptionHandler({LoginFailException.class, NoAuthenticationException.class})
     //@ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ResponseEntity<?> loginFailExceptionHandler(LoginFailException e) {
-        log.error("loginFailExceptionHandler -> {}:{}", e.getClass().getSimpleName(), e.getMessage());
+    public ResponseEntity<?> loginProblemExceptionHandler(RuntimeException e) {
+        log.error("loginProblemExceptionHandler -> {}:{}", e.getClass().getSimpleName(), e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("ERROR");
     }
 

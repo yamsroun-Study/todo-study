@@ -13,6 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+
 @Slf4j
 @RestController // @Controller + @ResponseBody
 @RequestMapping("/auth")
@@ -65,13 +68,25 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseDto<UserDto> logIn(
-        @RequestBody @Validated({UserValidationGroup.Login.class}) UserDto userDto
+        @RequestBody @Validated({UserValidationGroup.Login.class}) UserDto userDto,
+        HttpServletResponse response
     ) {
         log.debug(">>> userDto : {}", userDto);
         String email = userDto.getEmail();
         String password = userDto.getPassword();
 
         User user = userService.logIn(email, password);
+
+        Cookie idCookie = new Cookie("userId", user.getId());
+        idCookie.setPath("/");
+        response.addCookie(idCookie);
+
+        return ResponseDto.of(ResponseCode.SUCCESS);
+    }
+
+    @PostMapping("/logout")
+    public ResponseDto<UserDto> logOut() {
+        //TODO - 숙제(7/30)
         return ResponseDto.of(ResponseCode.SUCCESS);
     }
 }
