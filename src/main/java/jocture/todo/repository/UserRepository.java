@@ -1,7 +1,8 @@
 package jocture.todo.repository;
 
-import java.util.Optional;
 import jocture.todo.entity.User;
+
+import java.util.Optional;
 
 public interface UserRepository {
 
@@ -13,4 +14,5 @@ public interface UserRepository {
 
     Optional<User> findByEmailAndPassword(String email, String password);
 
+    Optional<User> findById(String userId);
 }

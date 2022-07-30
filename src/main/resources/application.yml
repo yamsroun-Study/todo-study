@@ -5,7 +5,8 @@
 spring:
   datasource:
     url: jdbc:log4jdbc:h2:tcp://localhost/~/Documents/Study/h2/db/todo
-    username: ENC(V0igA8gmvnK3H7Ys/ZIr1A==)
+    #username: ENC(V0igA8gmvnK3H7Ys/ZIr1A==)
+    username: sa
     password:
     #driver-class-name: org.h2.Driver
     #url: jdbc:log4jdbc:postgresql://localhost:5432/postgres

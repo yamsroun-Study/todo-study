@@ -1,11 +1,17 @@
 package jocture.todo.repository;
 
-import java.util.Optional;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import jocture.todo.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import java.util.Optional;
+
+// JPA : Java 표준 ORM 인터페이스
+//  -> 구현체 : Hibernate
+// Spring Data JPA
+//  -> 스프링에서 JPA 지원
 
 @Repository
 @RequiredArgsConstructor
@@ -58,5 +64,11 @@ public class UserJpaEmRepository implements UserRepository {
         } catch (NoResultException e) {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public Optional<User> findById(String userId) {
+        User user = em.find(User.class, userId);
+        return Optional.ofNullable(user);
     }
 }

@@ -1,6 +1,6 @@
 package jocture.todo.exception;
 
-public class LoginFailException extends RuntimeException {
+public class LoginFailException extends AuthenticationProblemException {
 
     public LoginFailException(String message) {
         super(message);

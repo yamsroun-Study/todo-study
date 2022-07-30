@@ -2,10 +2,10 @@ package jocture.todo.controller.advice;
 
 import jocture.todo.dto.response.ResponseDto;
 import jocture.todo.dto.response.ResponseErrorDto;
-import jocture.todo.exception.*;
+import jocture.todo.exception.ApplicationException;
+import jocture.todo.exception.AuthenticationProblemException;
 import jocture.todo.type.ResponseCode;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.*;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 public class TodoControllerAdvice {
 
     @ExceptionHandler
-    public ResponseEntity<?> badRequestHandler(BindException ex) {
-        log.error("badRequestHandler ->", ex);
+    public ResponseEntity<?> bindExceptionHandler(BindException ex) {
+        log.error("bindExceptionHandler ->", ex);
         BindingResult bindingResult = ex.getBindingResult();
         // List<ObjectError> allErrors = bindingResult.getAllErrors();
         // allErrors.forEach(objectError -> {
@@ -48,11 +48,14 @@ public class TodoControllerAdvice {
         return ResponseEntity.internalServerError().body("ERROR");
     }
 
-    @ExceptionHandler({LoginFailException.class, NoAuthenticationException.class})
+    //@ExceptionHandler({LoginFailException.class, NoAuthenticationException.class})
     //@ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ResponseEntity<?> loginProblemExceptionHandler(RuntimeException e) {
-        log.error("loginProblemExceptionHandler -> {}:{}", e.getClass().getSimpleName(), e.getMessage());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("ERROR");
+    @ExceptionHandler
+    public ResponseEntity<?> authenticationProblemExceptionHandler(AuthenticationProblemException e) {
+        log.error("authenticationProblemExceptionHandler -> {}:{}", e.getClass().getSimpleName(), e.getMessage());
+        ResponseErrorDto responseError = new ResponseErrorDto("", "", e.getMessage());
+        return ResponseDto.responseEntityOf(ResponseCode.UNAUTHORIZED, responseError);
+        //return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("ERROR");
     }
 
     @ExceptionHandler

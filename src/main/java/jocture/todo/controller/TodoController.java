@@ -5,12 +5,15 @@ import jocture.todo.dto.TodoDto;
 import jocture.todo.dto.response.ResponseDto;
 import jocture.todo.dto.response.ResponseResultDto;
 import jocture.todo.entity.Todo;
-import jocture.todo.exception.NoAuthenticationException;
+import jocture.todo.exception.InvalidUserException;
+import jocture.todo.exception.RequiredAuthenticationException;
 import jocture.todo.mapper.TodoMapper;
 import jocture.todo.service.TodoService;
+import jocture.todo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,12 +30,14 @@ import java.util.*;
 // @CrossOrigin(origins = {"http://localhost:3000"}, maxAge = 3600, methods = {GET, POST, PUT, DELETE})
 public class TodoController {
 
-    private final TodoService service;
+    private final TodoService todoService;
+    private final UserService userService;
     private final TodoMapper todoMapper;
 
     // HTTP Request Method : GET(조회), POST(등록/만능), PUT(전체수정), PATCH(부분수정), DELETE(삭제)
     // API 요소 : HTTP 요청 메소드 + URI Path (+ 요청 파라미터 + 요청 바디 + 응답 바디)
 
+    @Deprecated(since = "2.0", forRemoval = true)
     @GetMapping("/v1") //사용 금지
     public ResponseDto<List<TodoDto>> getTodoList(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
@@ -56,39 +61,22 @@ public class TodoController {
     }
 
     private void validateUser(String userId) {
-        if (userId == null) {
-            throw new NoAuthenticationException("로그인을 하셔야 합니다.");
+        if (StringUtils.hasText(userId)) {
+            throw new RequiredAuthenticationException("로그인을 하셔야 합니다.");
+        }
+        if (!userService.existsUser(userId)) {
+            throw new InvalidUserException("유효한 회원이 아닙니다.");
         }
     }
-
 
     // @CrossOrigin("*")
     private ResponseDto<List<TodoDto>> getRealTodoList(String userId) {
         // 스프링 3대 요소 : IoC(DI), PSA, AOP
 
-        log.debug("getTodoList()");
-        List<Todo> todos = service.getList(userId);
-        log.debug("getTodoList() 22");
+        List<Todo> todos = todoService.getList(userId);
         // JSON -> 객체를 표현하는 스트링
         // 객체를 JSON 스트링으로 변환 -> HttpMessageConverter (Serialize/Serializer)
         // JSON 스트링을 객체로 변환 -> HttpMessageConverter (Deserialize/Deserializer)
-
-        // List<TodoDto> todoDtos = new ArrayList<>();
-        // for (Todo todo: todos) {
-        // TodoDto todoDto = TodoDto.builder()
-        //     .id(todo.getId())
-        //     .title(todo.getTitle())
-        //     .done(todo.isDone())
-        //     .build();
-        // TodoDto todoDto = TodoDto.toDto(todo);
-        // todoDtos.add(todoDto);
-        // }
-
-        // return ResponseEntity.ok().body(TodoDto.toDtoList(todos));
-        // List<TodoDto> todos = new ArrayList<>();
-        // for (Todo todo: todos) {
-        //     todos.add(todoMapper.toDto(todo));
-        // }
 
         ResponseResultDto<List<TodoDto>> responseData = ResponseResultDto.of(todoMapper.toDtoList(todos));
         return ResponseDto.of(responseData);
@@ -108,7 +96,7 @@ public class TodoController {
         Todo todo = todoMapper.toEntity(todoDto);
         todo.setUserId(userId);
 
-        service.create(todo);
+        todoService.create(todo);
         return getRealTodoList(userId);
     }
 
@@ -128,7 +116,7 @@ public class TodoController {
         validateUser(userId);
         Todo todo = todoMapper.toEntity(todoDto);
         todo.setUserId(userId);
-        service.update(todo);
+        todoService.update(todo);
         return getRealTodoList(userId);
     }
 
@@ -140,7 +128,7 @@ public class TodoController {
         validateUser(userId);
         Todo todo = todoMapper.toEntity(todoDto);
         todo.setUserId(userId);
-        service.delete(todo);
+        todoService.delete(todo);
         return getRealTodoList(userId);
     }
 

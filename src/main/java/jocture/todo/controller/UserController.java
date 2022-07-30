@@ -85,8 +85,13 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    public ResponseDto<UserDto> logOut() {
-        //TODO - 숙제(7/30)
+    public ResponseDto<UserDto> logOut(
+        HttpServletResponse response
+    ) {
+        Cookie idCookie = new Cookie("userId", "");
+        idCookie.setPath("/");
+        idCookie.setMaxAge(0);
+        response.addCookie(idCookie);
         return ResponseDto.of(ResponseCode.SUCCESS);
     }
 }
