@@ -1,5 +1,7 @@
 package jocture.todo.controller;
 
+import jocture.todo.controller.session.SessionConst;
+import jocture.todo.controller.session.SessionManager;
 import jocture.todo.controller.validation.marker.UserValidationGroup;
 import jocture.todo.dto.UserDto;
 import jocture.todo.dto.response.ResponseDto;
@@ -13,8 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.*;
 
 @Slf4j
 @RestController // @Controller + @ResponseBody
@@ -24,6 +25,7 @@ public class UserController {
 
     private final UserService userService;
     private final UserMapper userMapper;
+    private final SessionManager sessionManager;
 
     @PostMapping("/signup")
     public ResponseDto<UserDto> signUp(
@@ -66,8 +68,8 @@ public class UserController {
         return ResponseDto.of(resultDto);
     }
 
-    @PostMapping("/login")
-    public ResponseDto<UserDto> logIn(
+    @PostMapping("/login/v1")
+    public ResponseDto<UserDto> logInV1(
         @RequestBody @Validated({UserValidationGroup.Login.class}) UserDto userDto,
         HttpServletResponse response
     ) {
@@ -84,14 +86,65 @@ public class UserController {
         return ResponseDto.of(ResponseCode.SUCCESS);
     }
 
-    @PostMapping("/logout")
-    public ResponseDto<UserDto> logOut(
+    @PostMapping("/login/v2")
+    public ResponseDto<UserDto> logInV2(
+        @RequestBody @Validated({UserValidationGroup.Login.class}) UserDto userDto,
+        HttpServletResponse response
+    ) {
+        log.debug(">>> userDto : {}", userDto);
+        String email = userDto.getEmail();
+        String password = userDto.getPassword();
+
+        User user = userService.logIn(email, password);
+
+        sessionManager.createSession(user, response);
+
+        return ResponseDto.of(ResponseCode.SUCCESS);
+    }
+
+    @PostMapping("/login/v3")
+    public ResponseDto<UserDto> logInV3(
+        @RequestBody @Validated({UserValidationGroup.Login.class}) UserDto userDto,
+        HttpServletRequest request
+    ) {
+        log.debug(">>> userDto : {}", userDto);
+        String email = userDto.getEmail();
+        String password = userDto.getPassword();
+
+        User user = userService.logIn(email, password);
+
+        HttpSession session = request.getSession(); //세션 생성
+        session.setAttribute(SessionConst.SESSION_USER_KEY, user); //세션에 데이터 저장
+
+        return ResponseDto.of(ResponseCode.SUCCESS);
+    }
+
+    @PostMapping("/logout/v1")
+    public ResponseDto<UserDto> logOutV1(
         HttpServletResponse response
     ) {
         Cookie idCookie = new Cookie("userId", "");
         idCookie.setPath("/");
         idCookie.setMaxAge(0);
         response.addCookie(idCookie);
+        return ResponseDto.of(ResponseCode.SUCCESS);
+    }
+
+    @PostMapping("/logout/v2")
+    public ResponseDto<UserDto> logOutV2(
+        HttpServletRequest request
+    ) {
+        sessionManager.expireSession(request);
+        return ResponseDto.of(ResponseCode.SUCCESS);
+    }
+
+    @PostMapping("/logout/v3")
+    public ResponseDto<UserDto> logOutV3(
+        HttpServletRequest request
+    ) {
+        HttpSession session = request.getSession();
+        session.invalidate();
+
         return ResponseDto.of(ResponseCode.SUCCESS);
     }
 }
