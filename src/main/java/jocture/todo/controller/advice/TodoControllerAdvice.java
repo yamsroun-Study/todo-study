@@ -45,7 +45,8 @@ public class TodoControllerAdvice {
     @ExceptionHandler
     public ResponseEntity<?> applicationExceptionHandler(ApplicationException e) {
         log.error("applicationExceptionHandler ->", e);
-        return ResponseEntity.internalServerError().body("ERROR");
+        ResponseErrorDto responseError = new ResponseErrorDto("", "", e.getMessage());
+        return ResponseDto.responseEntityOf(ResponseCode.INTERNAL_SERVER_ERROR, responseError);
     }
 
     //@ExceptionHandler({LoginFailException.class, NoAuthenticationException.class})
@@ -55,12 +56,12 @@ public class TodoControllerAdvice {
         log.error("authenticationProblemExceptionHandler -> {}:{}", e.getClass().getSimpleName(), e.getMessage());
         ResponseErrorDto responseError = new ResponseErrorDto("", "", e.getMessage());
         return ResponseDto.responseEntityOf(ResponseCode.UNAUTHORIZED, responseError);
-        //return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("ERROR");
     }
 
     @ExceptionHandler
     public ResponseEntity<?> globalExceptionHandler(Exception e) {
         log.error("globalExceptionHandler ->", e);
-        return ResponseEntity.internalServerError().body("ERROR");
+        ResponseErrorDto responseError = new ResponseErrorDto("", "", e.getMessage());
+        return ResponseDto.responseEntityOf(ResponseCode.INTERNAL_SERVER_ERROR, responseError);
     }
 }

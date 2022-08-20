@@ -1,6 +1,9 @@
 #server:
-#  servlet:
+#servlet:
 #    context-path: /study
+#session:
+#  cookie:
+#    name: TODO_SESSION_ID  # Default: JSESSIONID
 
 spring:
   datasource:

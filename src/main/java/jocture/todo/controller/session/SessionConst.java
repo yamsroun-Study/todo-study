@@ -13,5 +13,4 @@ public class SessionConst {
 
     public static final String SESSION_ID = "mySessionId";
     public static final String SESSION_USER_KEY = "userData";
-
 }
