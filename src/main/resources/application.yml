@@ -1,9 +1,10 @@
-#server:
-#servlet:
-#    context-path: /study
-#session:
-#  cookie:
-#    name: TODO_SESSION_ID  # Default: JSESSIONID
+server:
+  servlet:
+    #context-path: /study
+    session:
+      #cookie:
+      #name: TODO_SESSION_ID  # Default: JSESSIONID
+      timeout: 1800 # 글로벌 설정 : 값은 초로 설정 (분 단위로 설정 가능; 60, 120...)
 
 spring:
   datasource:
