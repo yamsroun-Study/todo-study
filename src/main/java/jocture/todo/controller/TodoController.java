@@ -78,7 +78,7 @@ public class TodoController {
         HttpServletRequest request
     ) {
         HttpSession session = request.getSession();
-        User loginUser = (User) session.getAttribute(SessionConst.SESSION_USER_KEY);
+        User loginUser = (User) session.getAttribute(SessionConst.SESSION_USER);
 
         log.debug(">>> loginUser  : {}", loginUser);
         validateUser(loginUser);
@@ -89,7 +89,7 @@ public class TodoController {
     public ResponseDto<List<TodoDto>> getTodoListV5(
         HttpSession session
     ) {
-        User loginUser = (User) session.getAttribute(SessionConst.SESSION_USER_KEY);
+        User loginUser = (User) session.getAttribute(SessionConst.SESSION_USER);
 
         log.debug(">>> loginUser  : {}", loginUser);
         validateUser(loginUser);
@@ -98,7 +98,7 @@ public class TodoController {
 
     @GetMapping("/v6")
     public ResponseDto<List<TodoDto>> getTodoListV6(
-        @SessionAttribute(name = SessionConst.SESSION_USER_KEY, required = false) User loginUser
+        @SessionAttribute(name = SessionConst.SESSION_USER, required = false) User loginUser
     ) {
         log.debug(">>> loginUser  : {}", loginUser);
         validateUser(loginUser);

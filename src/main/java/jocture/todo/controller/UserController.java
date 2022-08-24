@@ -114,7 +114,7 @@ public class UserController {
         User user = userService.logIn(email, password);
 
         HttpSession session = request.getSession(); //세션 생성
-        session.setAttribute(SessionConst.SESSION_USER_KEY, user); //세션에 데이터 저장
+        session.setAttribute(SessionConst.SESSION_USER, user); //세션에 데이터 저장
         //session.setMaxInactiveInterval(5); // 만료시간: 5초
 
         return ResponseDto.of(ResponseCode.SUCCESS);

@@ -24,10 +24,10 @@ public class LoginCheckFilter implements Filter {
             log.info("로그인 체크 필터 시작={}", requestURI);
             if (isLoginCheckTargetPath(requestURI)) {
                 HttpSession session = httpRequest.getSession(false);
-                if (session == null || session.getAttribute(SessionConst.SESSION_USER_KEY) == null) {
+                if (session == null || session.getAttribute(SessionConst.SESSION_USER) == null) {
                     log.error("미로그인 사용자 요청={}", requestURI);
                     HttpServletResponse httpResponse = (HttpServletResponse) response;
-                    httpResponse.setStatus(403);
+                    httpResponse.setStatus(401);
                     return;
                 }
             }
