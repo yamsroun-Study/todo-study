@@ -1,8 +1,12 @@
 package jocture.todo.config;
 
+import jocture.todo.web.argument.LoginUserArgumentResolver;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
 
 // Enum : Java 1.5
 
@@ -19,5 +23,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
             // .allowedHeaders("*")
             // .allowCredentials(true)
             .maxAge(MAX_AGE_SECONDS);
+    }
+
+    // 직접 만든 ArgumentResolver를 스프링에 등록
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(new LoginUserArgumentResolver());
     }
 }

@@ -1,6 +1,6 @@
 package jocture.todo.repository;
 
-import jocture.todo.entity.Todo;
+import jocture.todo.data.entity.Todo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

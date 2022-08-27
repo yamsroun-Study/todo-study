@@ -1,7 +1,7 @@
 package jocture.todo.config;
 
-import jocture.todo.interceptor.LogInterceptor;
-import jocture.todo.interceptor.LoginCheckInterceptor;
+import jocture.todo.web.interceptor.LogInterceptor;
+import jocture.todo.web.interceptor.LoginCheckInterceptor;
 import jocture.todo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;

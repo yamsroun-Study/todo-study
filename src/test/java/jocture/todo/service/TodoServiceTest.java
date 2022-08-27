@@ -1,6 +1,6 @@
 package jocture.todo.service;
 
-import jocture.todo.entity.Todo;
+import jocture.todo.data.entity.Todo;
 import jocture.todo.exception.ApplicationException;
 import jocture.todo.repository.TodoRepository;
 import lombok.extern.slf4j.Slf4j;

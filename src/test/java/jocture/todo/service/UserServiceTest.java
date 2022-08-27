@@ -1,6 +1,6 @@
 package jocture.todo.service;
 
-import jocture.todo.entity.User;
+import jocture.todo.data.entity.User;
 import jocture.todo.exception.ApplicationException;
 import jocture.todo.exception.LoginFailException;
 import jocture.todo.repository.UserRepository;

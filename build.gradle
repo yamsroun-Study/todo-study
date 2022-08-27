@@ -43,3 +43,8 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+clean {
+    delete file('out')
+    delete file('src/main/generated')
+}

@@ -1,10 +1,11 @@
 package jocture.todo.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jocture.todo.dto.TodoDto;
-import jocture.todo.mapper.TodoMapper;
+import jocture.todo.data.dto.TodoDto;
+import jocture.todo.data.mapper.TodoMapper;
+import jocture.todo.data.type.ResponseCode;
 import jocture.todo.service.TodoService;
-import jocture.todo.type.ResponseCode;
+import jocture.todo.web.controller.TodoController;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ class TodoControllerTest {
     @Test
     void createTodo() throws Exception {
         // Given
-        String url = "/todo";
+        String url = "/todo/v7";
         // Java 10에서 var 도입
         // -> 지역 변수에만 사용 가능
         // -> 컴파일러가 타입 추론(Type Inference)이 가능한 경우 사용 가능
@@ -55,7 +56,7 @@ class TodoControllerTest {
     @ValueSource(strings = {" ", "\t"})
     void createTodo_ValidError(String title) throws Exception {
         // Given
-        String url = "/todo";
+        String url = "/todo/v7";
         var dto = TodoDto.builder()
             .title(title)
             .build();
@@ -72,7 +73,7 @@ class TodoControllerTest {
     @Test
     void updateTodo() throws Exception {
         // Given
-        String url = "/todo";
+        String url = "/todo/v7";
         var dto = TodoDto.builder()
             .id(1)
             .title("스프링 공부하기")
@@ -92,7 +93,7 @@ class TodoControllerTest {
     @CsvSource(value = {":자바:true", "1::false", "::true"}, delimiter = ':')
     void updateTodo_ValidError(Integer id, String title, boolean done) throws Exception {
         // Given
-        String url = "/todo";
+        String url = "/todo/v7";
         var dto = TodoDto.builder()
             .id(id)
             .title(title)
@@ -112,7 +113,7 @@ class TodoControllerTest {
     @Test
     void deleteTodo() throws Exception {
         // Given
-        String url = "/todo";
+        String url = "/todo/v7";
         var dto = TodoDto.builder()
             .id(1)
             .build();
@@ -130,7 +131,7 @@ class TodoControllerTest {
     @NullSource
     void deleteTodo_ValidError(Integer id) throws Exception {
         // Given
-        String url = "/todo";
+        String url = "/todo/v7";
         var dto = TodoDto.builder()
             .id(id)
             .build();

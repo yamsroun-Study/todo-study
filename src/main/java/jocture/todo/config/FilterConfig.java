@@ -1,7 +1,7 @@
 package jocture.todo.config;
 
-import jocture.todo.filter.LogFilter;
-import jocture.todo.filter.LoginCheckFilter;
+import jocture.todo.web.filter.LogFilter;
+import jocture.todo.web.filter.LoginCheckFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 
