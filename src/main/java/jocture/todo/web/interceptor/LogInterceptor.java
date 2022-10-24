@@ -24,35 +24,33 @@ public class LogInterceptor implements HandlerInterceptor {
     private static final String LOG_ID = "logId";
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-        throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
+        String method = request.getMethod();
         String requestURI = request.getRequestURI();
-        log.info("requestURI={}", requestURI);
-
         String logId = UUID.randomUUID().toString();
         request.setAttribute(LOG_ID, logId);
 
-        log.info(">>> Request=[{}][{}]", logId, requestURI);
-        log.info(">>> Controller=[{}]", handler);
+        log.info(">>> Request=[{}][{} {}]", logId, method, requestURI);
+        log.info("Controller=[{}]", handler);
         return true;
     }
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView)
-        throws Exception {
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
 
+        String method = request.getMethod();
         String requestURI = request.getRequestURI();
         String logId = (String) request.getAttribute(LOG_ID);
-        log.info(">>> postHandle=[{}][{}]", logId, requestURI);
+        log.info("postHandle=[{}][{} {}]", logId, method, requestURI);
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
-        throws Exception {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
 
+        String method = request.getMethod();
         String requestURI = request.getRequestURI();
         String logId = (String) request.getAttribute(LOG_ID);
-        log.info(">>> Response=[{}][{}]", logId, requestURI);
+        log.info(">>> Response=[{}][{} {}]", logId, method, requestURI);
     }
 }

@@ -1,12 +1,13 @@
 package jocture.todo.web.interceptor;
 
-import jocture.todo.web.controller.session.SessionConst;
 import jocture.todo.data.entity.User;
 import jocture.todo.exception.InvalidUserException;
 import jocture.todo.exception.RequiredAuthenticationException;
 import jocture.todo.service.UserService;
+import jocture.todo.web.controller.session.SessionConst;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpMethod;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -19,9 +20,12 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
     private final UserService userService;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-        throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
+        if (HttpMethod.OPTIONS.matches(request.getMethod())) {
+            return true;
+        }
+        
         String requestURI = request.getRequestURI();
         log.info("인증 체크 인터셉터 시작={}", requestURI);
         checkLoginSession(request.getSession(false));
