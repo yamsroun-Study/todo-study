@@ -5,6 +5,7 @@ import jocture.todo.data.dto.response.ResponseDto;
 import jocture.todo.data.dto.response.ResponseResultDto;
 import jocture.todo.data.entity.User;
 import jocture.todo.service.UserService;
+import jocture.todo.web.auth.TokenProvider;
 import jocture.todo.web.controller.validation.marker.UserValidationGroup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 public class UserV4Controller {
 
     private final UserService userService;
+    private final TokenProvider tokenProvider;
 
     @PostMapping("/login")
     public ResponseDto<UserDto> logIn(
@@ -31,7 +33,8 @@ public class UserV4Controller {
         String password = userDto.getPassword();
 
         User user = userService.logIn(email, password);
-        UserDto responseUserDto = UserDto.builder().token(user.getId()).build();
+        String authToken = tokenProvider.create(user);
+        UserDto responseUserDto = UserDto.builder().token(authToken).build();
         return ResponseDto.of(ResponseResultDto.of(responseUserDto));
     }
 }
