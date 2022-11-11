@@ -46,7 +46,11 @@ public class UserService {
         return user.orElseThrow(() -> new LoginFailException("아이디 또는 패스워드가 잘못되었습니다."));
     }
 
+    public Optional<User> getUser(String userId) {
+        return userRepository.findById(userId);
+    }
+
     public boolean existsUser(String userId) {
-        return userRepository.findById(userId).isPresent();
+        return getUser(userId).isPresent();
     }
 }

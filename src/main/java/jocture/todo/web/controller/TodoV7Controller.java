@@ -7,9 +7,7 @@ import jocture.todo.data.entity.Todo;
 import jocture.todo.data.entity.User;
 import jocture.todo.data.mapper.TodoMapper;
 import jocture.todo.service.TodoService;
-import jocture.todo.service.UserService;
 import jocture.todo.web.argument.LoginUser;
-import jocture.todo.web.controller.session.SessionManager;
 import jocture.todo.web.controller.validation.marker.TodoValidationGroup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +23,7 @@ import java.util.List;
 public class TodoV7Controller {
 
     private final TodoService todoService;
-    private final UserService userService;
     private final TodoMapper todoMapper;
-    private final SessionManager sessionManager;
 
     @GetMapping
     public ResponseDto<List<TodoDto>> getTodoList(

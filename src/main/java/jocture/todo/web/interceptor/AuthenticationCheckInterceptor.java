@@ -1,9 +1,11 @@
 package jocture.todo.web.interceptor;
 
+import jocture.todo.data.entity.User;
 import jocture.todo.exception.InvalidUserException;
 import jocture.todo.exception.RequiredAuthenticationException;
 import jocture.todo.service.UserService;
 import jocture.todo.web.auth.TokenProvider;
+import jocture.todo.web.auth.UserAuthenticationHolder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
@@ -19,6 +21,7 @@ public class AuthenticationCheckInterceptor implements HandlerInterceptor {
 
     private final UserService userService;
     private final TokenProvider tokenProvider;
+    private final UserAuthenticationHolder userAuthenticationHolder;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -32,7 +35,8 @@ public class AuthenticationCheckInterceptor implements HandlerInterceptor {
 
         String authToken = parseAuthToken(request);
         String userId = validateAuthTokenAndGetUserId(authToken);
-        validateUserId(userId);
+        User user = validateUserIdAndGetUser(userId);
+        setUserToAuthenticationHolder(user);
         return true;
     }
 
@@ -52,10 +56,13 @@ public class AuthenticationCheckInterceptor implements HandlerInterceptor {
         return tokenProvider.validateAndGetUserId(authToken);
     }
 
-    private void validateUserId(String userId) {
-        if (!userService.existsUser(userId)) {
-            throw new InvalidUserException("유효한 회원이 아닙니다.");
-        }
+    private User validateUserIdAndGetUser(String userId) {
+        return userService.getUser(userId)
+            .orElseThrow(() -> new InvalidUserException("유효한 회원이 아닙니다."));
+    }
+
+    private void setUserToAuthenticationHolder(User user) {
+        userAuthenticationHolder.set(user);
     }
 
     private void throwNoLoginException() {
