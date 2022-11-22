@@ -1,8 +1,5 @@
 package jocture.todo.config;
 
-import jocture.todo.service.UserService;
-import jocture.todo.web.auth.TokenProvider;
-import jocture.todo.web.auth.UserAuthenticationHolder;
 import jocture.todo.web.interceptor.AuthenticationCheckInterceptor;
 import jocture.todo.web.interceptor.LogInterceptor;
 import lombok.RequiredArgsConstructor;
@@ -14,14 +11,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class InterceptorConfig implements WebMvcConfigurer {
 
-    private final UserService userService;
-    private final TokenProvider tokenProvider;
-    private final UserAuthenticationHolder userAuthenticationHolder;
+    private final LogInterceptor logInterceptor;
+    private final AuthenticationCheckInterceptor authenticationCheckInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
 
-        registry.addInterceptor(new LogInterceptor())
+        registry.addInterceptor(logInterceptor)
             .order(1)
             .addPathPatterns("/**");
         // "/*" 사용시 허용 : /a, /a?b
@@ -29,7 +25,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         // "/**" 사용시 허용 : /a, /a/b, /a/b/c
 
         //registry.addInterceptor(new LoginCheckInterceptor(userService))
-        registry.addInterceptor(new AuthenticationCheckInterceptor(userService, tokenProvider, userAuthenticationHolder))
+        registry.addInterceptor(authenticationCheckInterceptor)
             .order(2)
             .addPathPatterns("/**")
             .excludePathPatterns("/", "/sessions", "/auth/**");

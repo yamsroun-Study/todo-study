@@ -5,10 +5,11 @@ import jocture.todo.exception.InvalidUserException;
 import jocture.todo.exception.RequiredAuthenticationException;
 import jocture.todo.service.UserService;
 import jocture.todo.web.auth.TokenProvider;
-import jocture.todo.web.auth.UserAuthenticationHolder;
+import jocture.todo.web.auth.UserAthenticationHolder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -16,12 +17,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Slf4j
+@Component //스프링 빈(bean)과 일반 객체 차이 스스로 정리해 볼 것!
+//스프링 빈 생성 방법 : @Component, @Controller, @Service, @Respository, @Configuration, @Bean
+//스프링 (DI, IoC) 컨테이너
+// - DI : 의존성 주입(Dependency Injection()
+// - IoC: 제어의 역전(Inversion of Control)
+// - PSA: 포터블 서비스 추상화(Portable Service Abstraction)
 @RequiredArgsConstructor
 public class AuthenticationCheckInterceptor implements HandlerInterceptor {
 
     private final UserService userService;
     private final TokenProvider tokenProvider;
-    private final UserAuthenticationHolder userAuthenticationHolder;
+    private final UserAthenticationHolder userAuthenticationHolder;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -62,7 +69,7 @@ public class AuthenticationCheckInterceptor implements HandlerInterceptor {
     }
 
     private void setUserToAuthenticationHolder(User user) {
-        userAuthenticationHolder.set(user);
+        userAuthenticationHolder.setUser(user);
     }
 
     private void throwNoLoginException() {

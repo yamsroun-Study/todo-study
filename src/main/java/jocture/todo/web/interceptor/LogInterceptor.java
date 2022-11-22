@@ -1,6 +1,7 @@
 package jocture.todo.web.interceptor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -19,6 +20,7 @@ import java.util.UUID;
 //      -> 인터셉터1 -> 인터셉터2 -> 인터셉터3 -> 컨트롤러
 
 @Slf4j
+@Component
 public class LogInterceptor implements HandlerInterceptor {
 
     private static final String LOG_ID = "logId";

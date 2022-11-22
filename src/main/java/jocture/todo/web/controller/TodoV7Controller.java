@@ -8,6 +8,7 @@ import jocture.todo.data.entity.User;
 import jocture.todo.data.mapper.TodoMapper;
 import jocture.todo.service.TodoService;
 import jocture.todo.web.argument.LoginUser;
+import jocture.todo.web.auth.UserAthenticationHolder;
 import jocture.todo.web.controller.validation.marker.TodoValidationGroup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,13 +23,17 @@ import java.util.List;
 @RequestMapping("/todo/v7")
 public class TodoV7Controller {
 
+    private final UserAthenticationHolder userAuthenticationHolder;
     private final TodoService todoService;
     private final TodoMapper todoMapper;
 
+    //횡단(공통) 관심사(Cross-cutting concern)
+
     @GetMapping
     public ResponseDto<List<TodoDto>> getTodoList(
-        @LoginUser User loginUser
+        //@LoginUser User loginUser
     ) {
+        User loginUser = userAuthenticationHolder.getUser();
         log.debug(">>> loginUser  : {}", loginUser);
         return getRealTodoList(loginUser.getId());
     }
